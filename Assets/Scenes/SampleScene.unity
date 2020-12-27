@@ -217,3 +217,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5f1a0e92b42a824faa109636f25fea2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  image: {fileID: 2800000, guid: 2b4864d94816d114896f0e9f4068e5c2, type: 3}
+  contrastShader: {fileID: 4800000, guid: 1a6af24e489be4642bbc32bf84f3fda0, type: 3}
+  contrast: 1
