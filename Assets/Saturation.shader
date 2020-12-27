@@ -1,4 +1,4 @@
-﻿Shader "Hidden/Contrast" {
+﻿Shader "Hidden/Saturation" {
     Properties {
         _MainTex ("Texture", 2D) = "white" {}
     }
@@ -12,6 +12,8 @@
             #pragma fragment fp
 
             #include "UnityCG.cginc"
+
+            float _Saturation;
 
             struct VertexData {
                 float4 vertex : POSITION;
@@ -35,8 +37,12 @@
 
             fixed4 fp(v2f i) : SV_TARGET {
                 fixed4 col = tex2D(_MainTex, i.uv);
+                float luminance = (0.2126 * col.r) +
+                                  (0.71552 * col.g) +
+                                  (0.0722 * col.b);
 
-                col.rgb = 1 - col.rgb;
+                col.rgb = lerp(luminance, col.rgb, _Saturation);
+
                 return col;
             }
 

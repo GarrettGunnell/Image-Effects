@@ -18,7 +18,7 @@ public class ImageEditor : MonoBehaviour {
             saturationMaterial = new Material(saturationShader);
             saturationMaterial.hideFlags = HideFlags.HideAndDontSave;
         }
-
+        saturationMaterial.SetFloat("_Saturation", saturation);
         Graphics.Blit(image, destination, saturationMaterial);
     }
 }
