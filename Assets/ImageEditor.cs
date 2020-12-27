@@ -6,19 +6,19 @@ public class ImageEditor : MonoBehaviour {
 
     public Texture image;
     
-    public Shader contrastShader;
+    public Shader saturationShader;
 
-    [Range(0, 10)]
-    public int contrast = 1;
+    [Range(0, 2)]
+    public float saturation = 1;
 
-    private Material contrastMaterial;
+    private Material saturationMaterial;
 
     void OnRenderImage(RenderTexture source, RenderTexture destination) {
-        if (contrastMaterial == null) {
-            contrastMaterial = new Material(contrastShader);
-            contrastMaterial.hideFlags = HideFlags.HideAndDontSave;
+        if (saturationMaterial == null) {
+            saturationMaterial = new Material(saturationShader);
+            saturationMaterial.hideFlags = HideFlags.HideAndDontSave;
         }
 
-        Graphics.Blit(image, destination, contrastMaterial);
+        Graphics.Blit(image, destination, saturationMaterial);
     }
 }
