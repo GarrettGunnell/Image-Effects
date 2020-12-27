@@ -84,3 +84,8 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+*.png
+*.jpg
+*.png.meta
+*.jpg.meta
