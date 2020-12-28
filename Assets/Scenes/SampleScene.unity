@@ -217,6 +217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5f1a0e92b42a824faa109636f25fea2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  image: {fileID: 2800000, guid: 2b4864d94816d114896f0e9f4068e5c2, type: 3}
+  image: {fileID: 2800000, guid: 8f896bc32ec291045b6cd27d08891a7a, type: 3}
   effectShader: {fileID: 4800000, guid: b636708411e5f464d8dc6dbb75c52956, type: 3}
+  brightness: 1
   saturation: 1
