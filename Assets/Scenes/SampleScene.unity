@@ -218,5 +218,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 2800000, guid: 2b4864d94816d114896f0e9f4068e5c2, type: 3}
-  contrastShader: {fileID: 4800000, guid: 1a6af24e489be4642bbc32bf84f3fda0, type: 3}
-  contrast: 1
+  effectShader: {fileID: 4800000, guid: b636708411e5f464d8dc6dbb75c52956, type: 3}
+  saturation: 1

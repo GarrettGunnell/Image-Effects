@@ -6,19 +6,22 @@ public class ImageEditor : MonoBehaviour {
 
     public Texture image;
     
-    public Shader saturationShader;
+    public Shader effectShader;
 
     [Range(0, 2)]
     public float saturation = 1;
 
-    private Material saturationMaterial;
+    private Material effectMaterial;
+
+    const int saturationPass = 0;
 
     void OnRenderImage(RenderTexture source, RenderTexture destination) {
-        if (saturationMaterial == null) {
-            saturationMaterial = new Material(saturationShader);
-            saturationMaterial.hideFlags = HideFlags.HideAndDontSave;
+        if (effectMaterial == null) {
+            effectMaterial = new Material(effectShader);
+            effectMaterial.hideFlags = HideFlags.HideAndDontSave;
         }
-        saturationMaterial.SetFloat("_Saturation", saturation);
-        Graphics.Blit(image, destination, saturationMaterial);
+
+        effectMaterial.SetFloat("_Saturation", saturation);
+        Graphics.Blit(image, destination, effectMaterial, saturationPass);
     }
 }
