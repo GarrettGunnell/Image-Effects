@@ -12,12 +12,16 @@ public class ImageEditor : MonoBehaviour {
     public float brightness = 1;
 
     [Range(0, 5)]
+    public float contrast = 0;
+
+    [Range(0, 5)]
     public float saturation = 1;
 
     private Material effects;
 
     const int brightnessPass = 0;
-    const int saturationPass = 1;
+    const int contrastPass = 1;
+    const int saturationPass = 2;
 
     void OnRenderImage(RenderTexture source, RenderTexture destination) {
         if (effects == null) {
@@ -29,13 +33,17 @@ public class ImageEditor : MonoBehaviour {
         effects.SetFloat("_Brightness", brightness);
         Graphics.Blit(image, brightnessOutput, effects, brightnessPass);
 
-        RenderTexture saturationOutput = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
+        RenderTexture contrastOutput = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
+        effects.SetFloat("_Contrast", contrast);
+        Graphics.Blit(brightnessOutput, contrastOutput, effects, contrastPass);
 
+        RenderTexture saturationOutput = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
         effects.SetFloat("_Saturation", saturation);
-        Graphics.Blit(brightnessOutput, saturationOutput, effects, saturationPass);
+        Graphics.Blit(contrastOutput, saturationOutput, effects, saturationPass);
 
         Graphics.Blit(saturationOutput, destination);
         RenderTexture.ReleaseTemporary(saturationOutput);
         RenderTexture.ReleaseTemporary(brightnessOutput);
+        RenderTexture.ReleaseTemporary(contrastOutput);
     }
 }

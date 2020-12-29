@@ -45,6 +45,15 @@
                 #pragma vertex vp
                 #pragma fragment fp
 
+                #include "Contrast.cginc"
+            ENDCG
+        }
+
+        Pass {
+            CGPROGRAM
+                #pragma vertex vp
+                #pragma fragment fp
+
                 #include "Saturation.cginc"
             ENDCG
         }
