@@ -11,7 +11,7 @@ public class ImageEditor : MonoBehaviour {
     [Range(0, 5)]
     public float brightness = 1;
 
-    [Range(0, 5)]
+    [Range(-10, 10)]
     public float contrast = 0;
 
     [Range(0, 5)]
