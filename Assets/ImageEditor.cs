@@ -6,6 +6,7 @@ public class ImageEditor : MonoBehaviour {
 
     public Texture image;
     public Shader effectShader;
+    public Shader blendModesShader;
 
     [Range(0, 5)]
     public float brightness = 1;
@@ -17,14 +18,17 @@ public class ImageEditor : MonoBehaviour {
     public float saturation = 1;
 
     public enum BlendMode {
-        None,
+        None = 0,
         Multiply,
         Screen,
-        Linear Dodge,
-        Linear Burn
+        LinearDodge,
+        LinearBurn,
     }
 
+    public BlendMode blendMode;
+
     private Material effects;
+    private Material blendModes;
 
     const int brightnessPass = 0;
     const int contrastPass = 1;
@@ -34,6 +38,11 @@ public class ImageEditor : MonoBehaviour {
         if (effects == null) {
             effects = new Material(effectShader);
             effects.hideFlags = HideFlags.HideAndDontSave;
+        }
+
+        if (blendModes == null) {
+            blendModes = new Material(blendModesShader);
+            blendModes.hideFlags = HideFlags.HideAndDontSave;
         }
         
         RenderTexture currentDestination = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
@@ -52,7 +61,7 @@ public class ImageEditor : MonoBehaviour {
             currentSource = currentDestination;
         }
 
-        Graphics.Blit(currentDestination, destination);
+        Graphics.Blit(currentDestination, destination, blendModes, (int)blendMode);
         RenderTexture.ReleaseTemporary(currentDestination);
     }
 }

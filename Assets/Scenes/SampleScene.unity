@@ -219,6 +219,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   image: {fileID: 2800000, guid: 8f896bc32ec291045b6cd27d08891a7a, type: 3}
   effectShader: {fileID: 4800000, guid: b636708411e5f464d8dc6dbb75c52956, type: 3}
+  blendModesShader: {fileID: 4800000, guid: 4ece58597ffb41e409d642d7ac980df6, type: 3}
   brightness: 1
   contrast: 0
   saturation: 1
+  blendMode: 0
