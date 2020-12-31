@@ -27,23 +27,24 @@ public class ImageEditor : MonoBehaviour {
             effects = new Material(effectShader);
             effects.hideFlags = HideFlags.HideAndDontSave;
         }
+        
+        RenderTexture currentDestination = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
+        Graphics.Blit(image, currentDestination);
+        RenderTexture currentSource = currentDestination;
 
-        RenderTexture brightnessOutput = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
         effects.SetFloat("_Brightness", brightness);
-        Graphics.Blit(image, brightnessOutput, effects, brightnessPass);
-
-        RenderTexture contrastOutput = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
         effects.SetFloat("_Contrast", contrast);
-
-        Graphics.Blit(brightnessOutput, contrastOutput, effects, contrastPass);
-
-        RenderTexture saturationOutput = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
         effects.SetFloat("_Saturation", saturation);
-        Graphics.Blit(contrastOutput, saturationOutput, effects, saturationPass);
 
-        Graphics.Blit(saturationOutput, destination);
-        RenderTexture.ReleaseTemporary(saturationOutput);
-        RenderTexture.ReleaseTemporary(brightnessOutput);
-        RenderTexture.ReleaseTemporary(contrastOutput);
+        for (int i = 0; i < 3; ++i) {
+            currentDestination = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
+
+            Graphics.Blit(currentSource, currentDestination, effects, i);
+            RenderTexture.ReleaseTemporary(currentSource);
+            currentSource = currentDestination;
+        }
+
+        Graphics.Blit(currentDestination, destination);
+        RenderTexture.ReleaseTemporary(currentDestination);
     }
 }
