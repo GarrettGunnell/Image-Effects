@@ -20,19 +20,15 @@ public class ImageEditor : MonoBehaviour {
     public enum BlendMode {
         None = 0,
         Multiply,
-        Screen,
-        LinearDodge,
-        LinearBurn,
     }
 
     public BlendMode blendMode;
 
+    [Range(0, 1)]
+    public float blendStrength = 1;
+
     private Material effects;
     private Material blendModes;
-
-    const int brightnessPass = 0;
-    const int contrastPass = 1;
-    const int saturationPass = 2;
 
     void OnRenderImage(RenderTexture source, RenderTexture destination) {
         if (effects == null) {
@@ -61,6 +57,7 @@ public class ImageEditor : MonoBehaviour {
             currentSource = currentDestination;
         }
 
+        blendModes.SetFloat("_BlendStrength", blendStrength);
         Graphics.Blit(currentDestination, destination, blendModes, (int)blendMode);
         RenderTexture.ReleaseTemporary(currentDestination);
     }

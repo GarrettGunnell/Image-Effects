@@ -7,6 +7,7 @@
         #include "UnityCG.cginc"
 
         sampler2D _MainTex;
+        fixed _BlendStrength;
 
         struct VertexData {
             float4 vertex : POSITION;
@@ -30,6 +31,7 @@
 
     SubShader {
         Cull Off ZTest Off ZWrite Off 
+        
 
         Pass {
             CGPROGRAM
@@ -39,6 +41,15 @@
                 fixed4 fp(v2f f) : SV_TARGET {
                     return tex2D(_MainTex, f.uv);
                 }
+            ENDCG
+        }
+
+        Pass {
+            CGPROGRAM
+                #pragma vertex vp
+                #pragma fragment fp
+
+                #include "Blend Modes/Multiply.cginc"
             ENDCG
         }
     }
