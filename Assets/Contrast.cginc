@@ -12,12 +12,14 @@ float pascalTriangle(float a, float b) {
 
 fixed4 generalSmoothStep(int n, fixed4 color) {
     color = saturate(color);
-    half4 result = 0;
+    fixed4 result = 0;
 
     for (int i = 0; i <= n; ++i) {
         result += pascalTriangle(-n - 1, i) *
                   pascalTriangle(2 * n + 1, n - i) *
                   pow(color, n + i + 1);
+
+        if (dot(result, 1) > 1) return result;
     }
 
     return result;
