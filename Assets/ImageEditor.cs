@@ -16,6 +16,14 @@ public class ImageEditor : MonoBehaviour {
     [Range(0, 5)]
     public float saturation = 1;
 
+    public enum BlendMode {
+        None,
+        Multiply,
+        Screen,
+        Linear Dodge,
+        Linear Burn
+    }
+
     private Material effects;
 
     const int brightnessPass = 0;
