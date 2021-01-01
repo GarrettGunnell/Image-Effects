@@ -20,7 +20,8 @@ public class ImageEditor : MonoBehaviour {
     public enum BlendMode {
         None = 0,
         Multiply,
-        Screen
+        Screen,
+        Overlay
     } public BlendMode blendMode;
 
     [Range(0, 1)]
