@@ -52,5 +52,14 @@
                 #include "Blend Modes/Multiply.cginc"
             ENDCG
         }
+
+        Pass {
+            CGPROGRAM
+                #pragma vertex vp
+                #pragma fragment fp
+
+                #include "Blend Modes/Screen.cginc"
+            ENDCG
+        }
     }
 }

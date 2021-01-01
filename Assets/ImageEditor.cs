@@ -20,9 +20,8 @@ public class ImageEditor : MonoBehaviour {
     public enum BlendMode {
         None = 0,
         Multiply,
-    }
-
-    public BlendMode blendMode;
+        Screen
+    } public BlendMode blendMode;
 
     [Range(0, 1)]
     public float blendStrength = 1;
