@@ -4,4 +4,5 @@ This is a collection of shaders I've written for simple image effects such as co
 
 References: <br>
 https://en.wikipedia.org/wiki/Relative_luminance <br>
-https://en.wikipedia.org/wiki/Smoothstep#Generalization_to_higher-order_equations
+https://en.wikipedia.org/wiki/Smoothstep#Generalization_to_higher-order_equations <br>
+https://en.wikipedia.org/wiki/Blend_modes
