@@ -21,7 +21,6 @@ public class ImageEditor : MonoBehaviour {
         None = 0,
         Multiply,
         Screen,
-        Overlay,
         SoftLight
     } public BlendMode blendMode;
 

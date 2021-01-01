@@ -67,15 +67,6 @@
                 #pragma vertex vp
                 #pragma fragment fp
 
-                #include "Blend Modes/Overlay.cginc"
-            ENDCG
-        }
-
-        Pass {
-            CGPROGRAM
-                #pragma vertex vp
-                #pragma fragment fp
-
                 #include "Blend Modes/Soft Light.cginc"
             ENDCG
         }
