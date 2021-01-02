@@ -97,5 +97,14 @@
                 #include "Blend Modes/Linear Burn.cginc"
             ENDCG
         }
+
+        Pass {
+            CGPROGRAM
+                #pragma vertex vp
+                #pragma fragment fp
+
+                #include "Blend Modes/Linear Dodge.cginc"
+            ENDCG
+        }
     }
 }
