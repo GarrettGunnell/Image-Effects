@@ -70,5 +70,14 @@
                 #include "Blend Modes/Soft Light.cginc"
             ENDCG
         }
+
+        Pass {
+            CGPROGRAM
+                #pragma vertex vp
+                #pragma fragment fp
+
+                #include "Blend Modes/Color Burn.cginc"
+            ENDCG
+        }
     }
 }

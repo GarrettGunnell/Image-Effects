@@ -21,7 +21,8 @@ public class ImageEditor : MonoBehaviour {
         None = 0,
         Multiply,
         Screen,
-        SoftLight
+        SoftLight,
+        ColorBurn
     } public BlendMode blendMode;
 
     [Range(0, 1)]
