@@ -49,6 +49,24 @@
                 #pragma vertex vp
                 #pragma fragment fp
 
+                #include "Blend Modes/Darken.cginc"
+            ENDCG
+        }
+
+        Pass {
+            CGPROGRAM
+                #pragma vertex vp
+                #pragma fragment fp
+
+                #include "Blend Modes/Lighten.cginc"
+            ENDCG
+        }
+
+        Pass {
+            CGPROGRAM
+                #pragma vertex vp
+                #pragma fragment fp
+
                 #include "Blend Modes/Multiply.cginc"
             ENDCG
         }

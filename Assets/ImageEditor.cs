@@ -19,6 +19,8 @@ public class ImageEditor : MonoBehaviour {
 
     public enum BlendMode {
         None = 0,
+        Darken,
+        Lighten,
         Multiply,
         Screen,
         SoftLight,
