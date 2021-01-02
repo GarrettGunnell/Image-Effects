@@ -63,6 +63,7 @@ public class ImageEditor : MonoBehaviour {
             currentSource = currentDestination;
         }
 
+        blendModes.SetTexture("_BlendTex", currentDestination);
         blendModes.SetFloat("_BlendStrength", blendStrength);
         Graphics.Blit(currentDestination, destination, blendModes, (int)blendMode);
         RenderTexture.ReleaseTemporary(currentDestination);

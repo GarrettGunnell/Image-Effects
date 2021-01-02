@@ -7,6 +7,8 @@
         #include "UnityCG.cginc"
 
         sampler2D _MainTex;
+        sampler2D _BlendTex;
+
         fixed _BlendStrength;
 
         struct VertexData {
