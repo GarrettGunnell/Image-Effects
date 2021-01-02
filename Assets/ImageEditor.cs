@@ -22,7 +22,8 @@ public class ImageEditor : MonoBehaviour {
         Multiply,
         Screen,
         SoftLight,
-        ColorBurn
+        ColorBurn,
+        ColorDodge
     } public BlendMode blendMode;
 
     [Range(0, 1)]

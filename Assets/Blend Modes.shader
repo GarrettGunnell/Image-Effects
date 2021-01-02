@@ -79,5 +79,14 @@
                 #include "Blend Modes/Color Burn.cginc"
             ENDCG
         }
+
+        Pass {
+            CGPROGRAM
+                #pragma vertex vp
+                #pragma fragment fp
+
+                #include "Blend Modes/Color Dodge.cginc"
+            ENDCG
+        }
     }
 }
