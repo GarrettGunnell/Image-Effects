@@ -17,6 +17,8 @@ public class ImageEditor : MonoBehaviour {
     [Range(0, 5)]
     public float saturation = 1;
 
+    public Texture blendTexture;
+
     public enum BlendMode {
         None = 0,
         Darken,
@@ -63,7 +65,7 @@ public class ImageEditor : MonoBehaviour {
             currentSource = currentDestination;
         }
 
-        blendModes.SetTexture("_BlendTex", currentDestination);
+        blendModes.SetTexture("_BlendTex", blendTexture == null ? currentDestination : blendTexture);
         blendModes.SetFloat("_BlendStrength", blendStrength);
         Graphics.Blit(currentDestination, destination, blendModes, (int)blendMode);
         RenderTexture.ReleaseTemporary(currentDestination);
