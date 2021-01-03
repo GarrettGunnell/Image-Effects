@@ -21,7 +21,7 @@ public class ImageEditor : MonoBehaviour {
     [Range(0, 1)]
     public float grain = 0;
 
-    [Range(0, 1)]
+    [Range(0.01, 1)]
     public float grainResolution = 1;
 
     public Texture blendTexture;
