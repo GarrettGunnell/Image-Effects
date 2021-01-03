@@ -1,0 +1,11 @@
+﻿#pragma kernel CSMain
+
+#include "Random.cginc"
+
+RWTexture2D<float4> Result;
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID) {
+    initRand(id.x * id.y);
+    Result[id.xy] = randValue();
+}
