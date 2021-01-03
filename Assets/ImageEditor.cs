@@ -7,6 +7,7 @@ public class ImageEditor : MonoBehaviour {
     public Texture image;
     public Shader effectShader;
     public Shader blendModesShader;
+    public ComputeShader noiseGenerator;
 
     [Range(0, 5)]
     public float brightness = 1;
@@ -16,6 +17,9 @@ public class ImageEditor : MonoBehaviour {
 
     [Range(0, 5)]
     public float saturation = 1;
+
+    [Range(0, 1)]
+    public float grain = 0;
 
     public Texture blendTexture;
 
@@ -37,6 +41,7 @@ public class ImageEditor : MonoBehaviour {
 
     private Material effects;
     private Material blendModes;
+    private RenderTexture noise;
 
     void OnRenderImage(RenderTexture source, RenderTexture destination) {
         if (effects == null) {
@@ -47,6 +52,12 @@ public class ImageEditor : MonoBehaviour {
         if (blendModes == null) {
             blendModes = new Material(blendModesShader);
             blendModes.hideFlags = HideFlags.HideAndDontSave;
+        }
+
+        if (noise == null) {
+            noise = new RenderTexture(source.width, source.height, 0, source.format, RenderTextureReadWrite.Linear);
+            noise.enableRandomWrite = true;
+            noise.Create();
         }
         
         RenderTexture currentDestination = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
@@ -65,9 +76,19 @@ public class ImageEditor : MonoBehaviour {
             currentSource = currentDestination;
         }
 
+        if (grain > 0) {
+            noiseGenerator.SetTexture(0, "Result", noise);
+            noiseGenerator.SetFloat("_Seed", Random.Range(2, 1000));
+            noiseGenerator.Dispatch(0, Mathf.CeilToInt(noise.width / 8.0f) + 1, Mathf.CeilToInt(noise.height / 8.0f) + 1, 1);
+
+            Graphics.Blit(noise, destination);
+            //currentDestination = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
+
+        }
+
         blendModes.SetTexture("_BlendTex", blendTexture == null ? currentDestination : blendTexture);
         blendModes.SetFloat("_BlendStrength", blendStrength);
-        Graphics.Blit(currentDestination, destination, blendModes, (int)blendMode);
+        //Graphics.Blit(currentDestination, destination, blendModes, (int)blendMode);
         RenderTexture.ReleaseTemporary(currentDestination);
     }
 }

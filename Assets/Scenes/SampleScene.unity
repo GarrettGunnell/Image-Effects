@@ -220,7 +220,11 @@ MonoBehaviour:
   image: {fileID: 2800000, guid: 8f896bc32ec291045b6cd27d08891a7a, type: 3}
   effectShader: {fileID: 4800000, guid: b636708411e5f464d8dc6dbb75c52956, type: 3}
   blendModesShader: {fileID: 4800000, guid: 4ece58597ffb41e409d642d7ac980df6, type: 3}
+  noiseGenerator: {fileID: 7200000, guid: a7f1a951c20586448a1ef0fa4eb583cf, type: 3}
   brightness: 1
   contrast: 0
   saturation: 1
+  grain: 0.078
+  blendTexture: {fileID: 0}
   blendMode: 0
+  blendStrength: 1

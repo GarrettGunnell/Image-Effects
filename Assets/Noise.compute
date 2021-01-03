@@ -4,8 +4,10 @@
 
 RWTexture2D<float4> Result;
 
+float _Seed;
+
 [numthreads(8,8,1)]
 void CSMain (uint3 id : SV_DispatchThreadID) {
-    initRand(id.x * id.y);
-    Result[id.xy] = randValue();
+    initRand((_Seed + id.x) * (_Seed - id.y));
+    Result[id.xy - 1] = randValue();
 }
