@@ -79,6 +79,14 @@ public class ImageEditor : MonoBehaviour {
             currentSource = currentDestination;
         }
 
+        blendModes.SetTexture("_BlendTex", (blendTexture == null) ? currentDestination : blendTexture);
+        blendModes.SetFloat("_BlendStrength", blendStrength);
+        currentDestination = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
+
+        Graphics.Blit(currentSource, currentDestination, blendModes, (int)blendMode);
+        RenderTexture.ReleaseTemporary(currentSource);
+        currentSource = currentDestination;
+
         if (grain > 0) {
             noiseGenerator.SetTexture(0, "Result", noise);
             noiseGenerator.SetFloat("_Seed", Random.Range(2, 1000));
@@ -98,9 +106,7 @@ public class ImageEditor : MonoBehaviour {
             RenderTexture.ReleaseTemporary(grainTex);
         }
 
-        blendModes.SetTexture("_BlendTex", (blendTexture == null) ? currentDestination : blendTexture);
-        blendModes.SetFloat("_BlendStrength", blendStrength);
-        Graphics.Blit(currentDestination, destination, blendModes, (int)blendMode);
+        Graphics.Blit(currentDestination, destination);
         RenderTexture.ReleaseTemporary(currentDestination);
     }
 }
