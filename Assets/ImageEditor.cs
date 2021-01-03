@@ -21,6 +21,9 @@ public class ImageEditor : MonoBehaviour {
     [Range(0, 1)]
     public float grain = 0;
 
+    [Range(0, 1)]
+    public float grainResolution = 1;
+
     public Texture blendTexture;
 
     public enum BlendMode {
@@ -81,13 +84,18 @@ public class ImageEditor : MonoBehaviour {
             noiseGenerator.SetFloat("_Seed", Random.Range(2, 1000));
             noiseGenerator.Dispatch(0, Mathf.CeilToInt(noise.width / 8.0f) + 1, Mathf.CeilToInt(noise.height / 8.0f) + 1, 1);
 
-            effects.SetTexture("_GrainTex", noise);
+            int width = Mathf.CeilToInt(source.width * grainResolution);
+            int height = Mathf.CeilToInt(source.height * grainResolution);
+            RenderTexture grainTex = RenderTexture.GetTemporary(width, height, 0, source.format);
+            Graphics.Blit(noise, grainTex);
+
+            effects.SetTexture("_GrainTex", grainTex);
             effects.SetFloat("_Grain", grain);
 
-            //Graphics.Blit(noise, destination);
             currentDestination = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
             Graphics.Blit(currentSource, currentDestination, effects, 3);
             RenderTexture.ReleaseTemporary(currentSource);
+            RenderTexture.ReleaseTemporary(grainTex);
         }
 
         blendModes.SetTexture("_BlendTex", (blendTexture == null) ? currentDestination : blendTexture);
