@@ -36,7 +36,7 @@
                 #pragma vertex vp
                 #pragma fragment fp
 
-                #include "Brightness.cginc"
+                #include "Effects/Brightness.cginc"
             ENDCG
         }
 
@@ -45,7 +45,7 @@
                 #pragma vertex vp
                 #pragma fragment fp
 
-                #include "Contrast.cginc"
+                #include "Effects/Contrast.cginc"
             ENDCG
         }
 
@@ -54,7 +54,16 @@
                 #pragma vertex vp
                 #pragma fragment fp
 
-                #include "Saturation.cginc"
+                #include "Effects/Saturation.cginc"
+            ENDCG
+        }
+
+        Pass {
+            CGPROGRAM
+                #pragma vertex vp
+                #pragma fragment fp
+
+                #include "Effects/Grain.cginc"
             ENDCG
         }
     }

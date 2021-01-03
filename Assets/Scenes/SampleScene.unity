@@ -224,7 +224,7 @@ MonoBehaviour:
   brightness: 1
   contrast: 0
   saturation: 1
-  grain: 0.078
+  grain: 0
   blendTexture: {fileID: 0}
   blendMode: 0
   blendStrength: 1
