@@ -36,7 +36,8 @@ public class ImageEditor : MonoBehaviour {
     public float blendStrength = 1;
 
     public enum Filter {
-        None = 0
+        None = 0,
+        Sepia
     } public Filter filter;
 
     [Range(0, 1)]

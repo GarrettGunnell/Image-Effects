@@ -42,5 +42,14 @@
                 }
             ENDCG
         }
+
+        Pass {
+            CGPROGRAM
+                #pragma vertex vp
+                #pragma fragment fp
+
+                #include "Filters/Sepia.cginc"
+            ENDCG
+        }
     }
 }
