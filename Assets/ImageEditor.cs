@@ -5,8 +5,7 @@ using UnityEngine;
 public class ImageEditor : MonoBehaviour {
 
     public Texture image;
-    public Shader effectShader;
-    public Shader blendModesShader;
+    public Shader effectShader, blendModesShader, filterShader;
     public ComputeShader noiseGenerator;
 
     [Range(0, 5)]
@@ -42,21 +41,16 @@ public class ImageEditor : MonoBehaviour {
     [Range(0, 1)]
     public float blendStrength = 1;
 
-    private Material effects;
-    private Material blendModes;
+    public enum Filter {
+        None = 0
+    } public Filter filter;
+
+    private Material effects, blendModes, filters;
     private RenderTexture noise;
 
     void OnRenderImage(RenderTexture source, RenderTexture destination) {
-        if (effects == null) {
-            effects = new Material(effectShader);
-            effects.hideFlags = HideFlags.HideAndDontSave;
-        }
-
-        if (blendModes == null) {
-            blendModes = new Material(blendModesShader);
-            blendModes.hideFlags = HideFlags.HideAndDontSave;
-        }
-
+        InitMaterials();
+        
         if (noise == null) {
             noise = new RenderTexture(source.width, source.height, 0, source.format, RenderTextureReadWrite.Linear);
             noise.enableRandomWrite = true;
@@ -73,7 +67,6 @@ public class ImageEditor : MonoBehaviour {
 
         for (int i = 0; i < 3; ++i) {
             currentDestination = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
-
             Graphics.Blit(currentSource, currentDestination, effects, i);
             RenderTexture.ReleaseTemporary(currentSource);
             currentSource = currentDestination;
@@ -81,9 +74,14 @@ public class ImageEditor : MonoBehaviour {
 
         blendModes.SetTexture("_BlendTex", (blendTexture == null) ? currentDestination : blendTexture);
         blendModes.SetFloat("_BlendStrength", blendStrength);
-        currentDestination = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
 
+        currentDestination = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
         Graphics.Blit(currentSource, currentDestination, blendModes, (int)blendMode);
+        RenderTexture.ReleaseTemporary(currentSource);
+        currentSource = currentDestination;
+
+        currentDestination = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
+        Graphics.Blit(currentSource, currentDestination, filters, (int)filter);
         RenderTexture.ReleaseTemporary(currentSource);
         currentSource = currentDestination;
 
@@ -108,5 +106,22 @@ public class ImageEditor : MonoBehaviour {
 
         Graphics.Blit(currentDestination, destination);
         RenderTexture.ReleaseTemporary(currentDestination);
+    }
+
+    private void InitMaterials() {
+        if (effects == null) {
+            effects = new Material(effectShader);
+            effects.hideFlags = HideFlags.HideAndDontSave;
+        }
+
+        if (blendModes == null) {
+            blendModes = new Material(blendModesShader);
+            blendModes.hideFlags = HideFlags.HideAndDontSave;
+        }
+
+        if (filters == null) {
+            filters = new Material(filterShader);
+            filters.hideFlags = HideFlags.HideAndDontSave;
+        }
     }
 }
