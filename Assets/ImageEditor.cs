@@ -37,7 +37,8 @@ public class ImageEditor : MonoBehaviour {
 
     public enum Filter {
         None = 0,
-        Sepia
+        Sepia,
+        Filter1
     } public Filter filter;
 
     [Range(0, 1)]
