@@ -17,12 +17,6 @@ public class ImageEditor : MonoBehaviour {
     [Range(0, 5)]
     public float saturation = 1;
 
-    [Range(0, 1)]
-    public float grain = 0;
-
-    [Range(0.01f, 1.0f)]
-    public float grainResolution = 1;
-
     public Texture blendTexture;
 
     public enum BlendMode {
@@ -45,12 +39,18 @@ public class ImageEditor : MonoBehaviour {
         None = 0
     } public Filter filter;
 
+    [Range(0, 1)]
+    public float grain = 0;
+
+    [Range(0.01f, 1.0f)]
+    public float grainResolution = 1;
+
     private Material effects, blendModes, filters;
     private RenderTexture noise;
 
     void OnRenderImage(RenderTexture source, RenderTexture destination) {
         InitMaterials();
-        
+
         if (noise == null) {
             noise = new RenderTexture(source.width, source.height, 0, source.format, RenderTextureReadWrite.Linear);
             noise.enableRandomWrite = true;
