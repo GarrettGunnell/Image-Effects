@@ -49,6 +49,8 @@ public class ImageEditor : MonoBehaviour {
 
     private Material effects, blendModes, filters;
     private RenderTexture noise;
+    private RenderTexture output;
+    private Camera cam;
 
     void OnRenderImage(RenderTexture source, RenderTexture destination) {
         InitMaterials();
@@ -59,6 +61,11 @@ public class ImageEditor : MonoBehaviour {
             noise.Create();
         }
         
+        if (output == null) {
+            output = new RenderTexture(image.width, image.height, 0, source.format, RenderTextureReadWrite.Linear);
+            output.Create();
+        }
+
         RenderTexture currentDestination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
         Graphics.Blit(image, currentDestination);
         RenderTexture currentSource = currentDestination;
@@ -107,6 +114,7 @@ public class ImageEditor : MonoBehaviour {
         }
 
         Graphics.Blit(currentDestination, destination);
+        Graphics.Blit(currentDestination, output);
         RenderTexture.ReleaseTemporary(currentDestination);
     }
 
@@ -124,6 +132,20 @@ public class ImageEditor : MonoBehaviour {
         if (filters == null) {
             filters = new Material(filterShader);
             filters.hideFlags = HideFlags.HideAndDontSave;
+        }
+    }
+
+    private void Awake() {
+        cam = GetComponent<Camera>();
+    }
+
+    private void Update() {
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            Texture2D screenshot = new Texture2D(image.width, image.height, TextureFormat.RGB24, false);
+            RenderTexture.active = output;
+            screenshot.ReadPixels(new Rect(0, 0, image.width, image.height), 0, 0, false);
+            string fileName = string.Format("{0}/snap_{1}.png", Application.dataPath, System.DateTime.Now.ToString("HH-mm-ss"));
+            System.IO.File.WriteAllBytes(fileName, screenshot.EncodeToPNG());
         }
     }
 }
