@@ -8,6 +8,9 @@ public class ImageEditor : MonoBehaviour {
     public Shader effectShader, blendModesShader, filterShader;
     public ComputeShader noiseGenerator;
 
+    [Range(1, 5)]
+    public float gamma = 1;
+
     [Range(0, 5)]
     public float brightness = 1;
 
@@ -70,13 +73,14 @@ public class ImageEditor : MonoBehaviour {
         Graphics.Blit(image, currentDestination);
         RenderTexture currentSource = currentDestination;
 
+        effects.SetFloat("_Gamma", gamma);
         effects.SetFloat("_Brightness", brightness);
         effects.SetFloat("_Contrast", contrast);
         effects.SetFloat("_Saturation", saturation);
 
-        for (int i = 0; i < 3; ++i) {
+        for (int pass = 0; pass < 4; ++pass) {
             currentDestination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
-            Graphics.Blit(currentSource, currentDestination, effects, i);
+            Graphics.Blit(currentSource, currentDestination, effects, pass);
             RenderTexture.ReleaseTemporary(currentSource);
             currentSource = currentDestination;
         }

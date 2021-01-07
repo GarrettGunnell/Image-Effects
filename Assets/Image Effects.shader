@@ -36,6 +36,15 @@
                 #pragma vertex vp
                 #pragma fragment fp
 
+                #include "Effects/Gamma.cginc"
+            ENDCG
+        }
+
+        Pass {
+            CGPROGRAM
+                #pragma vertex vp
+                #pragma fragment fp
+
                 #include "Effects/Brightness.cginc"
             ENDCG
         }
