@@ -7,6 +7,7 @@ public class ImageEditor : MonoBehaviour {
     public Texture image;
     public Shader effectShader, blendModesShader, filterShader;
     public ComputeShader noiseGenerator;
+    public bool showUnedited = false;
 
     [Range(1, 5)]
     public float gamma = 1;
@@ -118,7 +119,7 @@ public class ImageEditor : MonoBehaviour {
         }
 
         Graphics.Blit(currentDestination, output);
-        Graphics.Blit(currentDestination, destination);
+        Graphics.Blit(showUnedited ? image : currentDestination, destination);
         RenderTexture.ReleaseTemporary(currentDestination);
     }
 
