@@ -113,7 +113,7 @@ public class ImageEditor : MonoBehaviour {
             effects.SetFloat("_Grain", grain);
 
             currentDestination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
-            Graphics.Blit(currentSource, currentDestination, effects, 3);
+            Graphics.Blit(currentSource, currentDestination, effects, 4);
             RenderTexture.ReleaseTemporary(currentSource);
             RenderTexture.ReleaseTemporary(grainTex);
         }
@@ -149,7 +149,7 @@ public class ImageEditor : MonoBehaviour {
             Texture2D screenshot = new Texture2D(image.width, image.height, TextureFormat.RGB24, false);
             RenderTexture.active = output;
             screenshot.ReadPixels(new Rect(0, 0, image.width, image.height), 0, 0, false);
-            string fileName = string.Format("{0}/snap_{1}.png", Application.dataPath, System.DateTime.Now.ToString("HH-mm-ss"));
+            string fileName = string.Format("{0}/../Examples/snap_{1}.png", Application.dataPath, System.DateTime.Now.ToString("HH-mm-ss"));
             System.IO.File.WriteAllBytes(fileName, screenshot.EncodeToPNG());
         }
     }
