@@ -59,7 +59,7 @@ public class ImageEditor : MonoBehaviour {
             noise.Create();
         }
         
-        RenderTexture currentDestination = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
+        RenderTexture currentDestination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
         Graphics.Blit(image, currentDestination);
         RenderTexture currentSource = currentDestination;
 
@@ -68,7 +68,7 @@ public class ImageEditor : MonoBehaviour {
         effects.SetFloat("_Saturation", saturation);
 
         for (int i = 0; i < 3; ++i) {
-            currentDestination = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
+            currentDestination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
             Graphics.Blit(currentSource, currentDestination, effects, i);
             RenderTexture.ReleaseTemporary(currentSource);
             currentSource = currentDestination;
@@ -77,12 +77,12 @@ public class ImageEditor : MonoBehaviour {
         blendModes.SetTexture("_BlendTex", (blendTexture == null) ? currentDestination : blendTexture);
         blendModes.SetFloat("_BlendStrength", blendStrength);
 
-        currentDestination = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
+        currentDestination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
         Graphics.Blit(currentSource, currentDestination, blendModes, (int)blendMode);
         RenderTexture.ReleaseTemporary(currentSource);
         currentSource = currentDestination;
 
-        currentDestination = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
+        currentDestination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
         Graphics.Blit(currentSource, currentDestination, filters, (int)filter);
         RenderTexture.ReleaseTemporary(currentSource);
         currentSource = currentDestination;
@@ -100,7 +100,7 @@ public class ImageEditor : MonoBehaviour {
             effects.SetTexture("_GrainTex", grainTex);
             effects.SetFloat("_Grain", grain);
 
-            currentDestination = RenderTexture.GetTemporary(source.width, source.height, 0, source.format);
+            currentDestination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
             Graphics.Blit(currentSource, currentDestination, effects, 3);
             RenderTexture.ReleaseTemporary(currentSource);
             RenderTexture.ReleaseTemporary(grainTex);
