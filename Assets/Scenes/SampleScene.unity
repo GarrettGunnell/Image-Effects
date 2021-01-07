@@ -222,6 +222,8 @@ MonoBehaviour:
   blendModesShader: {fileID: 4800000, guid: 4ece58597ffb41e409d642d7ac980df6, type: 3}
   filterShader: {fileID: 4800000, guid: da9d9d80c92e2a742a88e8f9588cea78, type: 3}
   noiseGenerator: {fileID: 7200000, guid: a7f1a951c20586448a1ef0fa4eb583cf, type: 3}
+  showUnedited: 0
+  gamma: 1
   brightness: 1
   contrast: 0
   saturation: 1
