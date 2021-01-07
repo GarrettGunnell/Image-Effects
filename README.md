@@ -6,4 +6,5 @@ References: <br>
 https://en.wikipedia.org/wiki/Relative_luminance <br>
 https://en.wikipedia.org/wiki/Smoothstep#Generalization_to_higher-order_equations <br>
 https://en.wikipedia.org/wiki/Blend_modes <br>
-http://www.deepskycolors.com/archive/2010/04/21/formulas-for-Photoshop-blending-modes.html
+http://www.deepskycolors.com/archive/2010/04/21/formulas-for-Photoshop-blending-modes.html <br>
+Screenshotting: https://www.youtube.com/watch?v=d-56p770t0U&ab_channel=BoardToBitsGames

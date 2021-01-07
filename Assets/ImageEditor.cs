@@ -113,8 +113,8 @@ public class ImageEditor : MonoBehaviour {
             RenderTexture.ReleaseTemporary(grainTex);
         }
 
-        Graphics.Blit(currentDestination, destination);
         Graphics.Blit(currentDestination, output);
+        Graphics.Blit(currentDestination, destination);
         RenderTexture.ReleaseTemporary(currentDestination);
     }
 
