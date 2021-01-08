@@ -52,23 +52,10 @@ public class ImageEditor : MonoBehaviour {
     public float grainResolution = 1;
 
     private Material effects, blendModes, filters;
-    private RenderTexture noise;
-    private RenderTexture output;
-    private Camera cam;
+    private RenderTexture noise, output;
 
     void OnRenderImage(RenderTexture source, RenderTexture destination) {
-        InitMaterials();
-
-        if (noise == null) {
-            noise = new RenderTexture(source.width, source.height, 0, source.format, RenderTextureReadWrite.Linear);
-            noise.enableRandomWrite = true;
-            noise.Create();
-        }
-        
-        if (output == null) {
-            output = new RenderTexture(image.width, image.height, 0, source.format, RenderTextureReadWrite.Linear);
-            output.Create();
-        }
+        InitMaterials(source);
 
         RenderTexture currentDestination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
         Graphics.Blit(image, currentDestination);
@@ -86,44 +73,18 @@ public class ImageEditor : MonoBehaviour {
             currentSource = currentDestination;
         }
 
-        blendModes.SetTexture("_BlendTex", (blendTexture == null) ? currentDestination : blendTexture);
-        blendModes.SetFloat("_BlendStrength", blendStrength);
-
-        currentDestination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
-        Graphics.Blit(currentSource, currentDestination, blendModes, (int)blendMode);
-        RenderTexture.ReleaseTemporary(currentSource);
-        currentSource = currentDestination;
-
-        currentDestination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
-        Graphics.Blit(currentSource, currentDestination, filters, (int)filter);
-        RenderTexture.ReleaseTemporary(currentSource);
-        currentSource = currentDestination;
-
-        if (grain > 0) {
-            noiseGenerator.SetTexture(0, "Result", noise);
-            noiseGenerator.SetFloat("_Seed", Random.Range(2, 1000));
-            noiseGenerator.Dispatch(0, Mathf.CeilToInt(noise.width / 8.0f) + 1, Mathf.CeilToInt(noise.height / 8.0f) + 1, 1);
-
-            int width = Mathf.CeilToInt(source.width * grainResolution);
-            int height = Mathf.CeilToInt(source.height * grainResolution);
-            RenderTexture grainTex = RenderTexture.GetTemporary(width, height, 0, source.format);
-            Graphics.Blit(noise, grainTex);
-
-            effects.SetTexture("_GrainTex", grainTex);
-            effects.SetFloat("_Grain", grain);
-
-            currentDestination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
-            Graphics.Blit(currentSource, currentDestination, effects, 4);
-            RenderTexture.ReleaseTemporary(currentSource);
-            RenderTexture.ReleaseTemporary(grainTex);
-        }
+        (currentDestination, currentSource) = Blend(currentSource, currentDestination);
+        (currentDestination, currentSource) = FilterPass(currentSource, currentDestination);
+        if (grain > 0)
+            (currentDestination, currentSource) = Grain(currentSource, currentDestination);
 
         Graphics.Blit(currentDestination, output);
         Graphics.Blit(showUnedited ? image : currentDestination, destination);
         RenderTexture.ReleaseTemporary(currentDestination);
+        RenderTexture.ReleaseTemporary(currentSource);
     }
 
-    private void InitMaterials() {
+    private void InitMaterials(RenderTexture source) {
         if (effects == null) {
             effects = new Material(effectShader);
             effects.hideFlags = HideFlags.HideAndDontSave;
@@ -138,10 +99,57 @@ public class ImageEditor : MonoBehaviour {
             filters = new Material(filterShader);
             filters.hideFlags = HideFlags.HideAndDontSave;
         }
+
+        if (output == null) {
+            output = new RenderTexture(image.width, image.height, 0, source.format, RenderTextureReadWrite.Linear);
+            output.Create();
+        }
+
+        if (noise == null) {
+            noise = new RenderTexture(source.width, source.height, 0, source.format, RenderTextureReadWrite.Linear);
+            noise.enableRandomWrite = true;
+            noise.Create();
+        }
     }
 
-    private void Awake() {
-        cam = GetComponent<Camera>();
+    private (RenderTexture, RenderTexture) Blend(RenderTexture source, RenderTexture destination) {
+        blendModes.SetTexture("_BlendTex", (blendTexture == null) ? source : blendTexture);
+        blendModes.SetFloat("_BlendStrength", blendStrength);
+
+        destination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
+        Graphics.Blit(source, destination, blendModes, (int)blendMode);
+        RenderTexture.ReleaseTemporary(source);
+
+        return (destination, destination);
+    }
+
+    private (RenderTexture, RenderTexture) FilterPass(RenderTexture source, RenderTexture destination) {
+        destination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
+        Graphics.Blit(source, destination, filters, (int)filter);
+        RenderTexture.ReleaseTemporary(source);
+
+        return (destination, destination);
+    }
+
+    private (RenderTexture, RenderTexture) Grain(RenderTexture source, RenderTexture destination) {
+        noiseGenerator.SetTexture(0, "Result", noise);
+        noiseGenerator.SetFloat("_Seed", Random.Range(2, 1000));
+        noiseGenerator.Dispatch(0, Mathf.CeilToInt(noise.width / 8.0f) + 1, Mathf.CeilToInt(noise.height / 8.0f) + 1, 1);
+
+        int width = Mathf.CeilToInt(source.width * grainResolution);
+        int height = Mathf.CeilToInt(source.height * grainResolution);
+        RenderTexture grainTex = RenderTexture.GetTemporary(width, height, 0, source.format);
+        Graphics.Blit(noise, grainTex);
+
+        effects.SetTexture("_GrainTex", grainTex);
+        effects.SetFloat("_Grain", grain);
+
+        destination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
+        Graphics.Blit(source, destination, effects, 4);
+        RenderTexture.ReleaseTemporary(source);
+        RenderTexture.ReleaseTemporary(grainTex);
+
+        return (destination, destination);
     }
 
     private void Update() {
