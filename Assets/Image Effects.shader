@@ -75,5 +75,14 @@
                 #include "Effects/Grain.cginc"
             ENDCG
         }
+
+        Pass {
+            CGPROGRAM
+                #pragma vertex vp
+                #pragma fragment fp
+
+                #include "Effects/Sharpness.cginc"
+            ENDCG
+        }
     }
 }
