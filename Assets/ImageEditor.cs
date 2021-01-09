@@ -51,7 +51,7 @@ public class ImageEditor : MonoBehaviour {
     [Range(1, 35)]
     public int blurRadius = 0;
 
-    [Range(0, 5)]
+    [Range(0, 10)]
     public float sharpness = 0;
 
     [Range(0, 1)]
@@ -155,10 +155,17 @@ public class ImageEditor : MonoBehaviour {
     }
 
     private (RenderTexture, RenderTexture) Sharpness(RenderTexture source, RenderTexture destination) {
+        effects.SetFloat("_Blur", 3.0f);
+        effects.SetFloat("_Radius", 3);
+        RenderTexture blurred = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
+        Graphics.Blit(source, blurred, effects, 5);
+
         effects.SetFloat("_Sharpness", sharpness);
+        effects.SetTexture("_BlurredTex", blurred);
         destination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
         Graphics.Blit(source, destination, effects, 6);
         RenderTexture.ReleaseTemporary(source);
+        RenderTexture.ReleaseTemporary(blurred);
 
         return (destination, destination);
     }
