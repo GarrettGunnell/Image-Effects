@@ -231,5 +231,6 @@ MonoBehaviour:
   blendMode: 0
   blendStrength: 1
   filter: 0
+  sharpness: 0
   grain: 0
   grainResolution: 1

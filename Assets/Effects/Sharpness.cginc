@@ -1,5 +1,4 @@
 float _Sharpness;
-float4 _MainTex_TexelSize;
 
 fixed4 fp(v2f f) : SV_TARGET {
     float3x3 kernel = {

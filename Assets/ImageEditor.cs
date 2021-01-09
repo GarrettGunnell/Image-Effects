@@ -45,6 +45,12 @@ public class ImageEditor : MonoBehaviour {
         Filter1
     } public Filter filter;
 
+    [Range(0, 35)]
+    public float blur = 0;
+
+    [Range(1, 35)]
+    public int blurRadius = 0;
+
     [Range(0, 5)]
     public float sharpness = 0;
 
@@ -80,6 +86,8 @@ public class ImageEditor : MonoBehaviour {
         (currentDestination, currentSource) = FilterPass(currentSource, currentDestination);
         if (sharpness > 0)
             (currentDestination, currentSource) = Sharpness(currentSource, currentDestination);
+        if (blur > 0)
+            (currentDestination, currentSource) = Blur(currentSource, currentDestination);
         if (grain > 0)
             (currentDestination, currentSource) = Grain(currentSource, currentDestination);
 
@@ -136,10 +144,20 @@ public class ImageEditor : MonoBehaviour {
         return (destination, destination);
     }
 
+    private (RenderTexture, RenderTexture) Blur(RenderTexture source, RenderTexture destination) {
+        effects.SetFloat("_Blur", blur);
+        effects.SetFloat("_Radius", blurRadius);
+        destination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
+        Graphics.Blit(source, destination, effects, 5);
+        RenderTexture.ReleaseTemporary(source);
+
+        return (destination, destination);
+    }
+
     private (RenderTexture, RenderTexture) Sharpness(RenderTexture source, RenderTexture destination) {
         effects.SetFloat("_Sharpness", sharpness);
         destination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
-        Graphics.Blit(source, destination, effects, 5);
+        Graphics.Blit(source, destination, effects, 6);
         RenderTexture.ReleaseTemporary(source);
 
         return (destination, destination);

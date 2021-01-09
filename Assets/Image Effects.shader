@@ -7,6 +7,7 @@
         #include "UnityCG.cginc"
 
         sampler2D _MainTex;
+        float4 _MainTex_TexelSize;
 
         struct VertexData {
             float4 vertex : POSITION;
@@ -73,6 +74,15 @@
                 #pragma fragment fp
 
                 #include "Effects/Grain.cginc"
+            ENDCG
+        }
+
+        Pass {
+            CGPROGRAM
+                #pragma vertex vp
+                #pragma fragment fp
+
+                #include "Effects/Blur.cginc"
             ENDCG
         }
 
