@@ -60,6 +60,12 @@ public class ImageEditor : MonoBehaviour {
     [Range(0.01f, 1.0f)]
     public float grainResolution = 1;
 
+    public bool toonShading = false;
+    public bool sampleAverage = false;
+    
+    [Range(0.0f, 1.0f)]
+    public float luminanceThreshold = 0.5f;
+
     private Material effects, blendModes, filters;
     private RenderTexture noise, output;
 
@@ -90,6 +96,8 @@ public class ImageEditor : MonoBehaviour {
             (currentDestination, currentSource) = Blur(currentSource, currentDestination);
         if (grain > 0)
             (currentDestination, currentSource) = Grain(currentSource, currentDestination);
+        if (toonShading)
+            (currentDestination, currentSource) = Toon(currentSource, currentDestination);
 
         Graphics.Blit(currentDestination, output);
         Graphics.Blit(showUnedited ? image : currentDestination, destination);
@@ -187,6 +195,21 @@ public class ImageEditor : MonoBehaviour {
         Graphics.Blit(source, destination, effects, 4);
         RenderTexture.ReleaseTemporary(source);
         RenderTexture.ReleaseTemporary(grainTex);
+
+        return (destination, destination);
+    }
+
+    private (RenderTexture, RenderTexture) Toon(RenderTexture source, RenderTexture destination) {
+        RenderTexture averageColor = RenderTexture.GetTemporary(1, 1, 0, source.format);
+        Graphics.Blit(source, averageColor);
+
+        effects.SetFloat("_LuminanceThreshold", luminanceThreshold);
+        effects.SetTexture("_AverageColorTex", averageColor);
+        effects.SetInt("_Averaging", sampleAverage ? 1 : 0);
+        destination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
+        Graphics.Blit(source, destination, effects, 7);
+        RenderTexture.ReleaseTemporary(source);
+        RenderTexture.ReleaseTemporary(averageColor);
 
         return (destination, destination);
     }
