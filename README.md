@@ -14,4 +14,5 @@ http://www.deepskycolors.com/archive/2010/04/21/formulas-for-Photoshop-blending-
 Screenshotting: https://www.youtube.com/watch?v=d-56p770t0U&ab_channel=BoardToBitsGames <br>
 https://www.foundalis.com/res/imgproc.htm <br>
 https://en.wikipedia.org/wiki/Unsharp_masking <br>
-https://danielilett.com/2019-05-08-tut1-3-smo-blur/
+https://danielilett.com/2019-05-08-tut1-3-smo-blur/ <br>
+https://surma.dev/things/ditherpunk/
