@@ -1,12 +1,14 @@
 float _Saturation;
+float _Gamma;
 
-fixed4 fp(v2f i) : SV_TARGET {
-    fixed4 col = tex2D(_MainTex, i.uv);
-    float luminance = (0.2126 * col.r) +
-                      (0.71552 * col.g) +
-                      (0.0722 * col.b);
+fixed4 fp(v2f f) : SV_TARGET {
+    fixed4 color = tex2D(_MainTex, f.uv);
+    fixed4 gammaCorrected = pow(color, 1 / _Gamma);
+    float luminance = (0.2126 * gammaCorrected.r) +
+                      (0.71552 * gammaCorrected.g) +
+                      (0.0722 * gammaCorrected.b);
 
-    col.rgb = lerp(luminance, col.rgb, _Saturation);
+    color.rgb = lerp(luminance, color.rgb, _Saturation);
 
-    return col;
+    return color;
 }
