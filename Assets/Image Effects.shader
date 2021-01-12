@@ -103,5 +103,14 @@
                 #include "Effects/Toon.cginc"
             ENDCG
         }
+
+        Pass {
+            CGPROGRAM
+                #pragma vertex vp
+                #pragma fragment fp
+
+                #include "Effects/Dithering.cginc"
+            ENDCG
+        }
     }
 }
