@@ -231,6 +231,11 @@ MonoBehaviour:
   blendMode: 0
   blendStrength: 1
   filter: 0
+  blur: 0
+  blurRadius: 1
   sharpness: 0
   grain: 0
   grainResolution: 1
+  toonShading: 0
+  sampleAverage: 0
+  luminanceThreshold: 0.5

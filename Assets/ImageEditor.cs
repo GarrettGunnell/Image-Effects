@@ -206,6 +206,7 @@ public class ImageEditor : MonoBehaviour {
         effects.SetFloat("_LuminanceThreshold", luminanceThreshold);
         effects.SetTexture("_AverageColorTex", averageColor);
         effects.SetInt("_Averaging", sampleAverage ? 1 : 0);
+        effects.SetFloat("_Gamma", gamma);
         destination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
         Graphics.Blit(source, destination, effects, 7);
         RenderTexture.ReleaseTemporary(source);
