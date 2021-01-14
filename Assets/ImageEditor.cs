@@ -304,11 +304,18 @@ public class ImageEditor : MonoBehaviour {
         return (destination, destination);
     }
 
-    private void Update() {
+    private void LateUpdate() {
         if (Input.GetKeyDown(KeyCode.Space)) {
-            Texture2D screenshot = new Texture2D(image.width, image.height, TextureFormat.RGB24, false);
+            Texture2D screenshot = new Texture2D(image.width, image.height, TextureFormat.RGB24, false, true);
             RenderTexture.active = output;
-            screenshot.ReadPixels(new Rect(0, 0, image.width, image.height), 0, 0, false);
+            screenshot.ReadPixels(new Rect(0, 0, image.width, image.height), 0, 0);
+            Color[] pixels = screenshot.GetPixels();
+            for (int p = 0; p < pixels.Length; ++p) {
+                pixels[p] = pixels[p].gamma;
+            }
+
+            screenshot.SetPixels(pixels);
+            screenshot.Apply();
             string fileName = string.Format("{0}/../Examples/snap_{1}.png", Application.dataPath, System.DateTime.Now.ToString("HH-mm-ss"));
             System.IO.File.WriteAllBytes(fileName, screenshot.EncodeToPNG());
         }
