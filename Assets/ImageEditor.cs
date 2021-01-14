@@ -78,6 +78,7 @@ public class ImageEditor : MonoBehaviour {
 
     private Material effects, blendModes, filters;
     private RenderTexture noise, output, noiseThreshold, bayerTex;
+    private int currentBayerLevel = 1;
 
     void OnRenderImage(RenderTexture source, RenderTexture destination) {
         InitMaterials(source);
@@ -269,8 +270,8 @@ public class ImageEditor : MonoBehaviour {
             noiseGenerator.Dispatch(0, Mathf.CeilToInt(noiseThreshold.width / 8.0f) + 1, Mathf.CeilToInt(noiseThreshold.height / 8.0f) + 1, 1);
         }
         
-        if (bayerTex == null || bayerLevel != (int)bayerTex.width) {
-            if (bayerTex != null && bayerLevel != bayerTex.width) bayerTex.Release();
+        if (bayerTex == null || bayerLevel != currentBayerLevel) {
+            if (bayerTex != null && bayerLevel != currentBayerLevel) bayerTex.Release();
             int bayerDim = (int)Mathf.Pow(2, bayerLevel);
             bayerTex = new RenderTexture(source.width, source.height, 0, source.format, RenderTextureReadWrite.Linear);
             bayerTex.enableRandomWrite = true;
@@ -286,6 +287,7 @@ public class ImageEditor : MonoBehaviour {
             noiseGenerator.SetTexture(1, "Result", bayerTex);
             noiseGenerator.Dispatch(1,Mathf.CeilToInt(bayerTex.width / 8.0f) + 1, Mathf.CeilToInt(bayerTex.height / 8.0f) + 1, 1);
             bayerBuffer.Release();
+            currentBayerLevel = bayerLevel;
         }
 
         RenderTexture averageColor = RenderTexture.GetTemporary(1, 1, 0, source.format);
