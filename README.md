@@ -5,6 +5,7 @@ This is a collection of post processing shaders I've authored for future use in 
 Examples:
 ![Example1](https://github.com/GarrettGunnell/Image-Effects/blob/main/Examples/output.png)
 ![Example2](https://github.com/GarrettGunnell/Image-Effects/blob/main/Examples/output2.png)
+![Example3](https://github.com/GarrettGunnell/Image-Effects/blob/main/Examples/output3.png)
 
 References: <br>
 https://en.wikipedia.org/wiki/Relative_luminance <br>
