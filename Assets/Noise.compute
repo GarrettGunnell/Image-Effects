@@ -6,7 +6,6 @@
 RWTexture2D<float4> Result;
 
 float _Seed;
-int _BayerLevel;
 
 [numthreads(8,8,1)]
 void WhiteNoise(uint3 id : SV_DispatchThreadID) {
@@ -14,7 +13,10 @@ void WhiteNoise(uint3 id : SV_DispatchThreadID) {
     Result[id.xy] = randValue();
 }
 
-[numthreads(2,2,1)]
+RWStructuredBuffer<float> _BayerBuffer;
+int _BayerLevel;
+
+[numthreads(8, 8, 1)]
 void Bayer(uint3 id : SV_DispatchThreadID) {
-    Result[id.xy] = randValue();
+    Result[id.xy] = _BayerBuffer[(id.x % pow(2, _BayerLevel)) + (id.y % pow(2, _BayerLevel)) * _BayerLevel];
 }

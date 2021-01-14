@@ -1,8 +1,9 @@
 float _LuminanceThreshold;
-int _Averaging;
 float _Gamma;
+int _InvertLuminance;
 sampler2D _AverageColorTex;
 sampler2D _ThresholdTex;
+float4 _ThresholdTex_TexelSize;
 
 fixed4 fp(v2f f) : SV_TARGET {
     fixed4 color = tex2D(_MainTex, f.uv);
@@ -12,11 +13,8 @@ fixed4 fp(v2f f) : SV_TARGET {
                     (0.0722 * gammaAdjusted.b);
 
     fixed threshold = tex2D(_ThresholdTex, f.uv).r;
+    threshold = _InvertLuminance ? 1 - threshold : threshold;
 
-    if (_Averaging) {
-        fixed4 average = tex2D(_AverageColorTex, f.uv);
-        return luminance > threshold ? average : 0;
-    }
-    
-    return luminance > threshold ? color : 0;
+    fixed4 average = tex2D(_AverageColorTex, f.uv);
+    return luminance > threshold ? average : 0;
 }

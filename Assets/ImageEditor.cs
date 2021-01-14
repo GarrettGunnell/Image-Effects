@@ -62,13 +62,22 @@ public class ImageEditor : MonoBehaviour {
 
     public bool toonShading = false;
     public bool dithering = false;
-    public bool sampleAverage = false;
+
+    public enum DitherMethod {
+        Noise = 0,
+        Bayer
+    } public DitherMethod ditherMethod;
+
+    [Range(1, 4)]
+    public int bayerLevel = 1;
+
+    public bool invertLuminance = false;
     
     [Range(0.0f, 1.0f)]
     public float luminanceThreshold = 0.5f;
 
     private Material effects, blendModes, filters;
-    private RenderTexture noise, output, noiseThreshold;
+    private RenderTexture noise, output, noiseThreshold, bayerTex;
 
     void OnRenderImage(RenderTexture source, RenderTexture destination) {
         InitMaterials(source);
@@ -207,8 +216,6 @@ public class ImageEditor : MonoBehaviour {
         Graphics.Blit(source, averageColor);
 
         effects.SetFloat("_LuminanceThreshold", luminanceThreshold);
-        effects.SetTexture("_AverageColorTex", averageColor);
-        effects.SetInt("_Averaging", sampleAverage ? 1 : 0);
         effects.SetFloat("_Gamma", gamma);
         destination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
         Graphics.Blit(source, destination, effects, 7);
@@ -236,14 +243,15 @@ public class ImageEditor : MonoBehaviour {
         }
     }
 
-    private float[,] Bayer(int n) {
+    private float[] Bayer(int n) {
         int dim = (int)Mathf.Pow(2, n);
-        float[,] M = new float[dim, dim];
-        float scalar = 1 / Mathf.Pow(2 * n, n);
-        
-        for (int i = 0; i < dim; ++i) {
+        float[] M = new float[dim * dim];
+        float scalar = ( n != 1) ? 1 / Mathf.Pow(2 * n, n) : 0.25f;
+
+        for (int i = 0, index = 0; i < dim; ++i) {
             for (int j = 0; j < dim; ++j) {
-                M[i, j] = (BayerCoordinate(n, dim / 2, dim / 2, i, j) + 1) * scalar;
+                M[index] = (BayerCoordinate(n, dim / 2, dim / 2, i, j) + 1) * scalar;
+                index++;
             }
         }
 
@@ -259,8 +267,25 @@ public class ImageEditor : MonoBehaviour {
             noiseGenerator.SetTexture(0, "Result", noiseThreshold);
             noiseGenerator.SetFloat("_Seed", Random.Range(2, 1000));
             noiseGenerator.Dispatch(0, Mathf.CeilToInt(noiseThreshold.width / 8.0f) + 1, Mathf.CeilToInt(noiseThreshold.height / 8.0f) + 1, 1);
-
-            float[,] M = Bayer(2);
+        }
+        
+        if (bayerTex == null || bayerLevel != (int)bayerTex.width) {
+            if (bayerTex != null && bayerLevel != bayerTex.width) bayerTex.Release();
+            int bayerDim = (int)Mathf.Pow(2, bayerLevel);
+            bayerTex = new RenderTexture(source.width, source.height, 0, source.format, RenderTextureReadWrite.Linear);
+            bayerTex.enableRandomWrite = true;
+            bayerTex.useDynamicScale = false;
+            bayerTex.Create();
+            
+            ComputeBuffer bayerBuffer = new ComputeBuffer(bayerDim * bayerDim, sizeof(float));
+            float[] M = Bayer(bayerLevel);
+            //foreach (var x in M) Debug.Log(x.ToString());
+            bayerBuffer.SetData(M);
+            noiseGenerator.SetBuffer(1, "_BayerBuffer", bayerBuffer);
+            noiseGenerator.SetInt("_BayerLevel", bayerLevel);
+            noiseGenerator.SetTexture(1, "Result", bayerTex);
+            noiseGenerator.Dispatch(1,Mathf.CeilToInt(bayerTex.width / 8.0f) + 1, Mathf.CeilToInt(bayerTex.height / 8.0f) + 1, 1);
+            bayerBuffer.Release();
         }
 
         RenderTexture averageColor = RenderTexture.GetTemporary(1, 1, 0, source.format);
@@ -268,8 +293,8 @@ public class ImageEditor : MonoBehaviour {
 
         effects.SetFloat("_LuminanceThreshold", luminanceThreshold);
         effects.SetTexture("_AverageColorTex", averageColor);
-        effects.SetTexture("_ThresholdTex", noiseThreshold);
-        effects.SetInt("_Averaging", sampleAverage ? 1 : 0);
+        effects.SetTexture("_ThresholdTex", ditherMethod == 0 ? noiseThreshold : bayerTex);
+        effects.SetInt("_InvertLuminance", invertLuminance ? 1 : 0);
         effects.SetFloat("_Gamma", gamma);
         destination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
         Graphics.Blit(source, destination, effects, 8);
