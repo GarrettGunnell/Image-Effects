@@ -218,6 +218,38 @@ public class ImageEditor : MonoBehaviour {
         return (destination, destination);
     }
 
+    float[,] bayerBase = {{0, 2},
+                          {3, 1}};
+
+    private float BayerCoordinate(int n, int xdiv, int ydiv, int i, int j) {
+        if (n == 1)
+            return bayerBase[i % 2, j % 2];
+        else {
+            int offset = (int)(Mathf.Pow(2, n - 1)) / 2;
+            int x = i < xdiv ? 0 : 1;
+            int y = j < ydiv ? 0 : 1;
+            
+            xdiv = i < xdiv ? xdiv - offset : xdiv + offset;
+            ydiv = j < ydiv ? ydiv - offset : ydiv + offset;
+            
+            return 4 * BayerCoordinate(n - 1, xdiv, ydiv, i, j) + bayerBase[x, y];
+        }
+    }
+
+    private float[,] Bayer(int n) {
+        int dim = (int)Mathf.Pow(2, n);
+        float[,] M = new float[dim, dim];
+        float scalar = 1 / Mathf.Pow(2 * n, n);
+        
+        for (int i = 0; i < dim; ++i) {
+            for (int j = 0; j < dim; ++j) {
+                M[i, j] = (BayerCoordinate(n, dim / 2, dim / 2, i, j) + 1) * scalar;
+            }
+        }
+
+        return M;
+    }
+
     private (RenderTexture, RenderTexture) Dithering(RenderTexture source, RenderTexture destination) {
         if (noiseThreshold == null) {
             noiseThreshold = new RenderTexture(source.width, source.height, 0, source.format, RenderTextureReadWrite.Linear);
@@ -227,6 +259,8 @@ public class ImageEditor : MonoBehaviour {
             noiseGenerator.SetTexture(0, "Result", noiseThreshold);
             noiseGenerator.SetFloat("_Seed", Random.Range(2, 1000));
             noiseGenerator.Dispatch(0, Mathf.CeilToInt(noiseThreshold.width / 8.0f) + 1, Mathf.CeilToInt(noiseThreshold.height / 8.0f) + 1, 1);
+
+            float[,] M = Bayer(2);
         }
 
         RenderTexture averageColor = RenderTexture.GetTemporary(1, 1, 0, source.format);
