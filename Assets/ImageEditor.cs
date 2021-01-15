@@ -64,11 +64,6 @@ public class ImageEditor : MonoBehaviour {
     public bool dithering = false;
     public bool interpolateThreshold = false;
 
-    public enum DitherMethod {
-        Noise = 0,
-        Bayer
-    } public DitherMethod ditherMethod;
-
     [Range(1, 4)]
     public int bayerLevel = 1;
 
@@ -78,7 +73,7 @@ public class ImageEditor : MonoBehaviour {
     public float luminanceThreshold = 0.5f;
 
     private Material effects, blendModes, filters;
-    private RenderTexture noise, output, noiseThreshold, bayerTex;
+    private RenderTexture noise, output, bayerTex;
     private int currentBayerLevel = 1;
 
     void OnRenderImage(RenderTexture source, RenderTexture destination) {
@@ -260,17 +255,7 @@ public class ImageEditor : MonoBehaviour {
         return M;
     }
 
-    private (RenderTexture, RenderTexture) Dithering(RenderTexture source, RenderTexture destination) {
-        if (noiseThreshold == null) {
-            noiseThreshold = new RenderTexture(source.width, source.height, 0, source.format, RenderTextureReadWrite.Linear);
-            noiseThreshold.enableRandomWrite = true;
-            noiseThreshold.Create();
-
-            noiseGenerator.SetTexture(0, "Result", noiseThreshold);
-            noiseGenerator.SetFloat("_Seed", Random.Range(2, 1000));
-            noiseGenerator.Dispatch(0, Mathf.CeilToInt(noiseThreshold.width / 8.0f) + 1, Mathf.CeilToInt(noiseThreshold.height / 8.0f) + 1, 1);
-        }
-        
+    private (RenderTexture, RenderTexture) Dithering(RenderTexture source, RenderTexture destination) {        
         if (bayerTex == null || bayerLevel != currentBayerLevel) {
             if (bayerTex != null && bayerLevel != currentBayerLevel) bayerTex.Release();
             int bayerDim = (int)Mathf.Pow(2, bayerLevel);
@@ -295,7 +280,7 @@ public class ImageEditor : MonoBehaviour {
 
         effects.SetFloat("_LuminanceThreshold", luminanceThreshold);
         effects.SetTexture("_AverageColorTex", averageColor);
-        effects.SetTexture("_ThresholdTex", ditherMethod == 0 ? noiseThreshold : bayerTex);
+        effects.SetTexture("_ThresholdTex", bayerTex);
         effects.SetInt("_InvertLuminance", invertLuminance ? 1 : 0);
         effects.SetFloat("_Gamma", gamma);
         effects.SetInt("_Interpolate", interpolateThreshold ? 1 : 0);
