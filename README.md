@@ -1,6 +1,6 @@
 # Image Effects
 
-This is a collection of post processing shaders I've authored for future use in other projects. Effects include gamma correction, brightness, contrast, saturation, recreation of photoshop blend modes and texture blending, miscellanous filters (e.g. sepia), gaussian blur, sharpness, toon shading, and film grain. Effects are separated into different passes for ease of reference and modularity.
+This is a collection of post processing shaders I've authored for future use in other projects. Effects include gamma correction, brightness, contrast, saturation, recreation of photoshop blend modes and texture blending, miscellanous filters (e.g. sepia), gaussian blur, sharpness, toon shading, bayer dithering, and film grain. Effects are separated into different passes for ease of reference and modularity.
 
 Examples:
 ![Example1](https://github.com/GarrettGunnell/Image-Effects/blob/main/Examples/output.png)

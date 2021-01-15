@@ -62,6 +62,7 @@ public class ImageEditor : MonoBehaviour {
 
     public bool toonShading = false;
     public bool dithering = false;
+    public bool interpolateThreshold = false;
 
     public enum DitherMethod {
         Noise = 0,
@@ -280,7 +281,6 @@ public class ImageEditor : MonoBehaviour {
             
             ComputeBuffer bayerBuffer = new ComputeBuffer(bayerDim * bayerDim, sizeof(float));
             float[] M = Bayer(bayerLevel);
-            //foreach (var x in M) Debug.Log(x.ToString());
             bayerBuffer.SetData(M);
             noiseGenerator.SetBuffer(1, "_BayerBuffer", bayerBuffer);
             noiseGenerator.SetInt("_BayerLevel", bayerLevel);
@@ -298,6 +298,7 @@ public class ImageEditor : MonoBehaviour {
         effects.SetTexture("_ThresholdTex", ditherMethod == 0 ? noiseThreshold : bayerTex);
         effects.SetInt("_InvertLuminance", invertLuminance ? 1 : 0);
         effects.SetFloat("_Gamma", gamma);
+        effects.SetInt("_Interpolate", interpolateThreshold ? 1 : 0);
         destination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
         Graphics.Blit(source, destination, effects, 8);
         RenderTexture.ReleaseTemporary(source);
