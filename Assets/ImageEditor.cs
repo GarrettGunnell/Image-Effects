@@ -73,7 +73,7 @@ public class ImageEditor : MonoBehaviour {
     public float luminanceThreshold = 0.5f;
 
     private Material effects, blendModes, filters;
-    private RenderTexture noise, output, bayerTex;
+    private RenderTexture noise, output, bayerTex, bayerTexUpscale;
     private int currentBayerLevel = 1;
 
     void OnRenderImage(RenderTexture source, RenderTexture destination) {
@@ -259,19 +259,26 @@ public class ImageEditor : MonoBehaviour {
         if (bayerTex == null || bayerLevel != currentBayerLevel) {
             if (bayerTex != null && bayerLevel != currentBayerLevel) bayerTex.Release();
             int bayerDim = (int)Mathf.Pow(2, bayerLevel);
-            bayerTex = new RenderTexture(source.width, source.height, 0, source.format, RenderTextureReadWrite.Linear);
+            bayerTex = new RenderTexture(bayerDim, bayerDim, 0, source.format, RenderTextureReadWrite.Linear);
             bayerTex.enableRandomWrite = true;
-            bayerTex.useDynamicScale = false;
             bayerTex.Create();
-            
-            ComputeBuffer bayerBuffer = new ComputeBuffer(bayerDim * bayerDim, sizeof(float));
+
             float[] M = Bayer(bayerLevel);
-            bayerBuffer.SetData(M);
-            noiseGenerator.SetBuffer(1, "_BayerBuffer", bayerBuffer);
+
             noiseGenerator.SetInt("_BayerLevel", bayerLevel);
+            noiseGenerator.SetInt("_BayerDimension", bayerDim);
+            noiseGenerator.SetFloat("_Scalar", bayerLevel != 1 ? 1 / Mathf.Pow(2 * bayerLevel, bayerLevel) : 0.25f);
             noiseGenerator.SetTexture(1, "Result", bayerTex);
-            noiseGenerator.Dispatch(1,Mathf.CeilToInt(bayerTex.width / 8.0f) + 1, Mathf.CeilToInt(bayerTex.height / 8.0f) + 1, 1);
-            bayerBuffer.Release();
+            noiseGenerator.Dispatch(1, Mathf.CeilToInt(bayerTex.width / 8.0f), Mathf.CeilToInt(bayerTex.height / 8.0f), 1);
+
+            if (bayerTexUpscale != null) bayerTexUpscale.Release();
+            bayerTexUpscale = new RenderTexture(source.width, source.height, 0, source.format, RenderTextureReadWrite.Linear);
+            bayerTexUpscale.enableRandomWrite = true;
+            bayerTex.Create();
+
+            noiseGenerator.SetTexture(2, "Result", bayerTexUpscale);
+            noiseGenerator.Dispatch(2, Mathf.CeilToInt(bayerTexUpscale.width / 8.0f), Mathf.CeilToInt(bayerTexUpscale.height / 8.0f), 1);
+
             currentBayerLevel = bayerLevel;
         }
 
@@ -280,7 +287,7 @@ public class ImageEditor : MonoBehaviour {
 
         effects.SetFloat("_LuminanceThreshold", luminanceThreshold);
         effects.SetTexture("_AverageColorTex", averageColor);
-        effects.SetTexture("_ThresholdTex", bayerTex);
+        effects.SetTexture("_ThresholdTex", bayerTexUpscale);
         effects.SetInt("_InvertLuminance", invertLuminance ? 1 : 0);
         effects.SetFloat("_Gamma", gamma);
         effects.SetInt("_Interpolate", interpolateThreshold ? 1 : 0);
