@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class ImageEditor : MonoBehaviour {
@@ -64,7 +65,7 @@ public class ImageEditor : MonoBehaviour {
     public bool dithering = false;
     public bool interpolateThreshold = false;
 
-    [Range(1, 4)]
+    [Range(1, 12)]
     public int bayerLevel = 1;
 
     public bool invertLuminance = false;
@@ -222,39 +223,6 @@ public class ImageEditor : MonoBehaviour {
         return (destination, destination);
     }
 
-    float[,] bayerBase = {{0, 2},
-                          {3, 1}};
-
-    private float BayerCoordinate(int n, int xdiv, int ydiv, int i, int j) {
-        if (n == 1)
-            return bayerBase[i % 2, j % 2];
-        else {
-            int offset = (int)(Mathf.Pow(2, n - 1)) / 2;
-            int x = i < xdiv ? 0 : 1;
-            int y = j < ydiv ? 0 : 1;
-            
-            xdiv = i < xdiv ? xdiv - offset : xdiv + offset;
-            ydiv = j < ydiv ? ydiv - offset : ydiv + offset;
-            
-            return 4 * BayerCoordinate(n - 1, xdiv, ydiv, i, j) + bayerBase[x, y];
-        }
-    }
-
-    private float[] Bayer(int n) {
-        int dim = (int)Mathf.Pow(2, n);
-        float[] M = new float[dim * dim];
-        float scalar = ( n != 1) ? 1 / Mathf.Pow(2 * n, n) : 0.25f;
-
-        for (int i = 0, index = 0; i < dim; ++i) {
-            for (int j = 0; j < dim; ++j) {
-                M[index] = (BayerCoordinate(n, dim / 2, dim / 2, i, j) + 1) * scalar;
-                index++;
-            }
-        }
-
-        return M;
-    }
-
     private (RenderTexture, RenderTexture) Dithering(RenderTexture source, RenderTexture destination) {        
         if (bayerTex == null || bayerLevel != currentBayerLevel) {
             if (bayerTex != null && bayerLevel != currentBayerLevel) bayerTex.Release();
@@ -263,13 +231,20 @@ public class ImageEditor : MonoBehaviour {
             bayerTex.enableRandomWrite = true;
             bayerTex.Create();
 
-            float[] M = Bayer(bayerLevel);
-
             noiseGenerator.SetInt("_BayerLevel", bayerLevel);
             noiseGenerator.SetInt("_BayerDimension", bayerDim);
             noiseGenerator.SetFloat("_Scalar", bayerLevel != 1 ? 1 / Mathf.Pow(2 * bayerLevel, bayerLevel) : 0.25f);
             noiseGenerator.SetTexture(1, "Result", bayerTex);
+
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+
             noiseGenerator.Dispatch(1, Mathf.CeilToInt(bayerTex.width / 8.0f) + 1, Mathf.CeilToInt(bayerTex.height / 8.0f) + 1, 1);
+
+            timer.Stop();
+            System.TimeSpan ts = timer.Elapsed;
+            string elapsedTime = System.String.Format("{0:00}.{1:00}", ts.Seconds, ts.Milliseconds / 10);
+            UnityEngine.Debug.Log(elapsedTime);
 
             if (bayerTexUpscale != null) bayerTexUpscale.Release();
             bayerTexUpscale = new RenderTexture(source.width, source.height, 0, source.format, RenderTextureReadWrite.Linear);
