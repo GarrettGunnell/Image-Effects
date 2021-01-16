@@ -269,14 +269,15 @@ public class ImageEditor : MonoBehaviour {
             noiseGenerator.SetInt("_BayerDimension", bayerDim);
             noiseGenerator.SetFloat("_Scalar", bayerLevel != 1 ? 1 / Mathf.Pow(2 * bayerLevel, bayerLevel) : 0.25f);
             noiseGenerator.SetTexture(1, "Result", bayerTex);
-            noiseGenerator.Dispatch(1, Mathf.CeilToInt(bayerTex.width / 8.0f), Mathf.CeilToInt(bayerTex.height / 8.0f), 1);
+            noiseGenerator.Dispatch(1, Mathf.CeilToInt(bayerTex.width / 8.0f) + 1, Mathf.CeilToInt(bayerTex.height / 8.0f) + 1, 1);
 
             if (bayerTexUpscale != null) bayerTexUpscale.Release();
             bayerTexUpscale = new RenderTexture(source.width, source.height, 0, source.format, RenderTextureReadWrite.Linear);
             bayerTexUpscale.enableRandomWrite = true;
-            bayerTex.Create();
+            bayerTexUpscale.Create();
 
             noiseGenerator.SetTexture(2, "Result", bayerTexUpscale);
+            noiseGenerator.SetTexture(2, "_BayerTex", bayerTex);
             noiseGenerator.Dispatch(2, Mathf.CeilToInt(bayerTexUpscale.width / 8.0f), Mathf.CeilToInt(bayerTexUpscale.height / 8.0f), 1);
 
             currentBayerLevel = bayerLevel;

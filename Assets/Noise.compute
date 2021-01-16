@@ -14,26 +14,31 @@ void WhiteNoise(uint3 id : SV_DispatchThreadID) {
     Result[id.xy] = randValue();
 }
 
-int _BayerLevel;
-int _BayerDimension;
-int _Scalar;
+uint _BayerLevel;
+uint _BayerDimension;
+float _Scalar;
 
-int2x2 bayerBase = {0, 2,
-                    3, 1};
+uint BayerCoordinate(uint n, uint xdiv, uint ydiv, uint i, uint j) {
+    uint2x2 bayerBase = {{0, 2}, {3, 1}};
+    uint constants[12];
 
-int BayerCoordinate(int n, int xdiv, int ydiv, int i, int j) {
-    if (n == 1)
-        return bayerBase[i % 2][j % 2];
-    else {
-        int offset = pow(2, n - 1) * 0.5;
-        half x = i < xdiv ? 0 : 1;
-        half y = j < ydiv ? 0 : 1;
+    uint value = bayerBase[i % 2][j % 2];
+    while (n > 1) {
+        uint x = i < xdiv ? 0 : 1;
+        uint y = j < ydiv ? 0 : 1;
         
-        xdiv = i < xdiv ? xdiv - offset : xdiv + offset;
-        ydiv = j < ydiv ? ydiv - offset : ydiv + offset;
-        
-        return 4 * BayerCoordinate(n - 1, xdiv, ydiv, i, j) + bayerBase[x, y];
+        xdiv = i < xdiv ? xdiv - (xdiv * 0.5) : xdiv + (xdiv * 0.5);
+        ydiv = j < ydiv ? ydiv - (ydiv * 0.5) : ydiv + (ydiv * 0.5);
+
+        constants[n - 2] = bayerBase[x][y];
+        n--;
     }
+    
+    for (uint x = 0; x < _BayerLevel - 1; ++x) {
+        value = 4 * value + constants[x];
+    }
+            
+    return value;
 }
 
 [numthreads(8, 8, 1)]
@@ -45,6 +50,5 @@ RWTexture2D<float4> _BayerTex;
 
 [numthreads(8, 8, 1)]
 void TileBayer(uint3 id : SV_DispatchThreadID) {
-    uint2 uv = uint2(id.x % _BayerDimension, id.y % _BayerDimension);
-    Result[id.xy] = _BayerTex[uv.xy];
+    Result[id.xy] = _BayerTex[uint2(id.x % _BayerDimension, id.y % _BayerDimension)];
 }
