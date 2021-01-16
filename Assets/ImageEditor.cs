@@ -65,7 +65,7 @@ public class ImageEditor : MonoBehaviour {
     public bool dithering = false;
     public bool interpolateThreshold = false;
 
-    [Range(1, 12)]
+    [Range(1, 5)]
     public int bayerLevel = 1;
 
     public bool invertLuminance = false;
@@ -240,12 +240,6 @@ public class ImageEditor : MonoBehaviour {
             timer.Start();
 
             noiseGenerator.Dispatch(1, Mathf.CeilToInt(bayerTex.width / 8.0f) + 1, Mathf.CeilToInt(bayerTex.height / 8.0f) + 1, 1);
-
-            timer.Stop();
-            
-            System.TimeSpan ts = timer.Elapsed;
-            string elapsedTime = System.String.Format("{0:00}.{1:00}", ts.Seconds, ts.Milliseconds / 10);
-            UnityEngine.Debug.Log(elapsedTime);
 
             if (bayerTexUpscale != null) bayerTexUpscale.Release();
             bayerTexUpscale = new RenderTexture(source.width, source.height, 0, source.format, RenderTextureReadWrite.Linear);
