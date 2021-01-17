@@ -4,7 +4,7 @@
 
 #include "Random.cginc"
 
-RWTexture2D<float4> Result;
+RWTexture2D<half> Result;
 
 float _Seed;
 
@@ -46,7 +46,7 @@ void Bayer(uint3 id : SV_DispatchThreadID) {
     Result[id.xy] = (BayerCoordinate(_BayerLevel, _BayerDimension * 0.5, _BayerDimension * 0.5, id.x, id.y) + 1) * _Scalar;
 }
 
-RWTexture2D<float4> _BayerTex;
+RWTexture2D<half> _BayerTex;
 
 [numthreads(8, 8, 1)]
 void TileBayer(uint3 id : SV_DispatchThreadID) {

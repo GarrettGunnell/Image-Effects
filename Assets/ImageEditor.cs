@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using UnityEngine;
 
 public class ImageEditor : MonoBehaviour {
@@ -227,7 +226,7 @@ public class ImageEditor : MonoBehaviour {
         if (bayerTex == null || bayerLevel != currentBayerLevel) {
             if (bayerTex != null && bayerLevel != currentBayerLevel) bayerTex.Release();
             int bayerDim = (int)Mathf.Pow(2, bayerLevel);
-            bayerTex = new RenderTexture(bayerDim, bayerDim, 0, source.format, RenderTextureReadWrite.Linear);
+            bayerTex = new RenderTexture(bayerDim, bayerDim, 0, RenderTextureFormat.RHalf, RenderTextureReadWrite.Linear);
             bayerTex.enableRandomWrite = true;
             bayerTex.Create();
 
@@ -236,13 +235,10 @@ public class ImageEditor : MonoBehaviour {
             noiseGenerator.SetFloat("_Scalar", bayerLevel != 1 ? 1 / Mathf.Pow(2 * bayerLevel, bayerLevel) : 0.25f);
             noiseGenerator.SetTexture(1, "Result", bayerTex);
 
-            Stopwatch timer = new Stopwatch();
-            timer.Start();
-
             noiseGenerator.Dispatch(1, Mathf.CeilToInt(bayerTex.width / 8.0f) + 1, Mathf.CeilToInt(bayerTex.height / 8.0f) + 1, 1);
 
             if (bayerTexUpscale != null) bayerTexUpscale.Release();
-            bayerTexUpscale = new RenderTexture(source.width, source.height, 0, source.format, RenderTextureReadWrite.Linear);
+            bayerTexUpscale = new RenderTexture(source.width, source.height, 0, bayerTex.format, RenderTextureReadWrite.Linear);
             bayerTexUpscale.enableRandomWrite = true;
             bayerTexUpscale.Create();
 

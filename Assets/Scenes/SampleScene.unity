@@ -237,8 +237,8 @@ MonoBehaviour:
   grain: 0
   grainResolution: 1
   toonShading: 0
-  dithering: 0
-  ditherMethod: 1
-  bayerLevel: 1
+  dithering: 1
+  interpolateThreshold: 0
+  bayerLevel: 13
   invertLuminance: 0
   luminanceThreshold: 0.5
