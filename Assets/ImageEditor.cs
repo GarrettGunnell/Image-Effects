@@ -68,6 +68,9 @@ public class ImageEditor : MonoBehaviour {
     public int bayerLevel = 1;
 
     public bool invertLuminance = false;
+
+    [Range(0, 5)]
+    public float averageBrightness = 0;
     
     [Range(0.0f, 1.0f)]
     public float luminanceThreshold = 0.5f;
@@ -258,6 +261,7 @@ public class ImageEditor : MonoBehaviour {
         effects.SetInt("_InvertLuminance", invertLuminance ? 1 : 0);
         effects.SetFloat("_Gamma", gamma);
         effects.SetInt("_Interpolate", interpolateThreshold ? 1 : 0);
+        effects.SetFloat("_AverageBrightness", averageBrightness);
         destination = RenderTexture.GetTemporary(image.width, image.height, 0, source.format);
         Graphics.Blit(source, destination, effects, 8);
         RenderTexture.ReleaseTemporary(source);

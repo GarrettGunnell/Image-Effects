@@ -3,6 +3,7 @@ float _Gamma;
 int _InvertLuminance;
 int _Interpolate;
 sampler2D _AverageColorTex;
+float _AverageBrightness;
 sampler2D _ThresholdTex;
 float4 _ThresholdTex_TexelSize;
 
@@ -20,5 +21,5 @@ fixed4 fp(v2f f) : SV_TARGET {
     if (_Interpolate)
         return lerp(0, color, luminance - threshold);
     else
-        return luminance > threshold ? average : 0;
+        return luminance > threshold ? average + _AverageBrightness : 0;
 }
