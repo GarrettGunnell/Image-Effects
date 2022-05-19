@@ -217,7 +217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5f1a0e92b42a824faa109636f25fea2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  image: {fileID: 2800000, guid: ff6532da38307ac44b168c670d42667b, type: 3}
+  image: {fileID: 2800000, guid: 7936d9155bc54cd43af030a15ea3a409, type: 3}
   effectShader: {fileID: 4800000, guid: b636708411e5f464d8dc6dbb75c52956, type: 3}
   blendModesShader: {fileID: 4800000, guid: 4ece58597ffb41e409d642d7ac980df6, type: 3}
   filterShader: {fileID: 4800000, guid: da9d9d80c92e2a742a88e8f9588cea78, type: 3}
@@ -237,8 +237,9 @@ MonoBehaviour:
   grain: 0
   grainResolution: 1
   toonShading: 0
-  dithering: 1
+  dithering: 0
   interpolateThreshold: 0
   bayerLevel: 1
   invertLuminance: 0
+  averageBrightness: 0
   luminanceThreshold: 0.5
